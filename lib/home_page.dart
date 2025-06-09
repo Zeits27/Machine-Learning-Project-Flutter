@@ -91,6 +91,7 @@ class _HomePageState extends State<HomePage> {
                 'Unknown Artist', // Use 'artist' (matches backend normalized key)
             'album': rec['album'] ?? '',
             'genre': rec['genre'] ?? '',
+            'category': category,
           };
         }).toList();
 

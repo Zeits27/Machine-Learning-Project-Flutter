@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'recomendationpage.dart';
 import 'songdetailpage.dart';
+import 'ArtistDetailPage.dart';
 
 class RecommendationPage extends StatelessWidget {
   final List<Map<String, String>> recommendations;
@@ -17,7 +18,7 @@ class RecommendationPage extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
         title: const Text(
-          'Songs For You',
+          'For You',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -80,6 +81,22 @@ class RecommendationPage extends StatelessWidget {
                         _greenButton("Play"),
                         const SizedBox(width: 8),
                         _darkButton("View", () {
+                          // if ((song['category'] ?? '').toLowerCase() ==
+                          //     'artist') {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => ArtistDetailPage(
+                          //         artist: song['artist'] ?? 'Unknown Artist',
+                          //         allRecommendations: recommendations
+                          //             .where(
+                          //               (s) => s['artist'] == song['artist'],
+                          //             )
+                          //             .toList(),
+                          //       ),
+                          //     ),
+                          //   );
+                          // } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -89,6 +106,7 @@ class RecommendationPage extends StatelessWidget {
                               ),
                             ),
                           );
+                          // }
                         }),
 
                         const SizedBox(width: 8),
