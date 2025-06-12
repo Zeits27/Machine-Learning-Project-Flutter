@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ArtistDetailPage extends StatelessWidget {
+class AlbumDetailPage extends StatelessWidget {
+  final String album;
   final String artist;
   final String popularity;
   final List<Map<String, String>> allRecommendations;
 
-  const ArtistDetailPage({
+  const AlbumDetailPage({
     super.key,
+    required this.album,
     required this.artist,
     required this.popularity,
     required this.allRecommendations,
@@ -14,12 +16,11 @@ class ArtistDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter other artist recommendations (not the selected one)
-    final artistRecommendations = allRecommendations
+    final albumRecommendations = allRecommendations
         .where(
           (item) =>
-              (item['recommendation_type'] ?? '').toLowerCase() == 'artist' &&
-              (item['artist'] ?? '') != artist,
+              (item['recommendation_type'] ?? '').toLowerCase() == 'album' &&
+              (item['album'] ?? '') != album,
         )
         .toList();
 
@@ -29,7 +30,7 @@ class ArtistDetailPage extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
         title: Text(
-          artist,
+          album,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -42,12 +43,12 @@ class ArtistDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _artistHeader(),
+            _albumHeader(),
             const SizedBox(height: 24),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'More Artists You May Like',
+                'More Albums You May Like',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -58,11 +59,12 @@ class ArtistDetailPage extends StatelessWidget {
             const SizedBox(height: 12),
             Expanded(
               child: ListView.builder(
-                itemCount: artistRecommendations.length,
+                itemCount: albumRecommendations.length,
                 itemBuilder: (context, index) {
-                  final item = artistRecommendations[index];
-                  final name = item['artist'] ?? 'Unknown Artist';
-                  final popularity = item['popularity'] ?? 'N/A';
+                  final item = albumRecommendations[index];
+                  final name = item['album'] ?? 'Unknown Album';
+                  final artistName = item['artist'] ?? 'Unknown Artist';
+                  final pop = item['popularity'] ?? 'N/A';
 
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 8),
@@ -92,7 +94,7 @@ class ArtistDetailPage extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                'Popularity: $popularity',
+                                'Artist: $artistName',
                                 style: const TextStyle(color: Colors.grey),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -106,9 +108,10 @@ class ArtistDetailPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ArtistDetailPage(
-                                artist: name,
-                                popularity: popularity,
+                              builder: (context) => AlbumDetailPage(
+                                album: name,
+                                artist: artistName,
+                                popularity: pop,
                                 allRecommendations: allRecommendations,
                               ),
                             ),
@@ -128,26 +131,27 @@ class ArtistDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _artistHeader() {
+  Widget _albumHeader() {
     return Row(
       children: [
         const CircleAvatar(
           radius: 40,
           backgroundColor: Colors.grey,
-          child: Icon(Icons.person, color: Colors.white, size: 40),
+          child: Icon(Icons.album, color: Colors.white, size: 40),
         ),
         const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              artist,
+              album,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
+            Text("Artist: $artist", style: const TextStyle(color: Colors.grey)),
             Text(
               "Popularity: $popularity",
               style: const TextStyle(color: Colors.grey),
@@ -155,7 +159,7 @@ class ArtistDetailPage extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                _greenButton("Follow"),
+                _greenButton("Play"),
                 const SizedBox(width: 8),
                 const Icon(Icons.favorite_border, color: Colors.green),
               ],

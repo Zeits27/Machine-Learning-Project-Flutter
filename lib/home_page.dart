@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? selectedCategory;
   String? recommendationAmount;
+  String? recommendBy = 'artist';
+
   TextEditingController inputController = TextEditingController();
 
   bool filterArtist = true;
@@ -61,15 +63,15 @@ class _HomePageState extends State<HomePage> {
             "queries": songs,
             "search_by": category,
             "filter_by": filters.isEmpty ? null : filters,
-            "number_of_recommendation": amount, // NOTE: key must match backend
-            "recommend_type": "song",
+            "number_of_recommendation": amount,
+            "recommend_type": recommendBy ?? 'artist',
           }
         : {
             "query": songs.first,
             "search_by": category,
             "filter_by": filters.isEmpty ? null : filters,
             "top_k": amount,
-            "recommend_type": "song",
+            "recommend_type": recommendBy ?? 'artist',
           };
 
     try {
@@ -85,13 +87,13 @@ class _HomePageState extends State<HomePage> {
 
         final recommendations = rawRecs.map<Map<String, String>>((rec) {
           return {
-            'title': rec['track_name'] ?? 'Unknown Title', // Use 'track_name'
-            'artist':
-                rec['artist'] ??
-                'Unknown Artist', // Use 'artist' (matches backend normalized key)
+            'title': rec['track_name'] ?? 'Unknown Title',
+            'artist': rec['artist'] ?? 'Unknown Artist',
             'album': rec['album'] ?? '',
             'genre': rec['genre'] ?? '',
             'category': category,
+            'popularity': rec['popularity']?.toString() ?? 'N/A',
+            'recommendation_type': recommendBy ?? 'artist',
           };
         }).toList();
 
@@ -131,6 +133,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 24),
+
               _sectionTitle('Select your recommendation Category'),
               _greenDropdown(
                 value: selectedCategory,
@@ -138,6 +141,7 @@ class _HomePageState extends State<HomePage> {
                 items: ['Song', 'Artist'],
                 onChanged: (value) => setState(() => selectedCategory = value),
               ),
+
               _sectionTitle('Insert Song Titles / Artist Names'),
               TextField(
                 controller: inputController,
@@ -170,6 +174,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: const Text('Add More'),
               ),
+
               _sectionTitle('Choose amount of recommendations'),
               _greenDropdown(
                 value: recommendationAmount,
@@ -178,6 +183,15 @@ class _HomePageState extends State<HomePage> {
                 onChanged: (value) =>
                     setState(() => recommendationAmount = value),
               ),
+
+              _sectionTitle('Recommend By'),
+              _greenDropdown(
+                value: recommendBy,
+                hint: 'Recommend by ...',
+                items: ['Artist', 'Song', 'Album'],
+                onChanged: (value) => setState(() => recommendBy = value),
+              ),
+
               const SizedBox(height: 20),
               _sectionTitle('Extra Filters (Optional)'),
               const SizedBox(height: 10),
@@ -196,6 +210,7 @@ class _HomePageState extends State<HomePage> {
                 filterAlbum,
                 (val) => setState(() => filterAlbum = val),
               ),
+
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
